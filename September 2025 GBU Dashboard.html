@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GoDaddy Finance - GBU Dashboard September 2025</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #064e3b 0%, #047857 100%);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .nav-header {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px;
+            margin: 20px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            text-align: center;
+            position: sticky;
+            top: 20px;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-header h1 {
+            font-size: 2.5em;
+            background: linear-gradient(135deg, #059669, #047857);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 800;
+            margin-bottom: 10px;
+        }
+
+        .nav-header p {
+            color: #666;
+            font-size: 1.1em;
+            margin-bottom: 20px;
+        }
+
+        .nav-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .nav-tab {
+            background: linear-gradient(135deg, #064e3b, #047857);
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            font-size: 0.85em;
+        }
+
+        .nav-tab:hover, .nav-tab.active {
+            background: linear-gradient(135deg, #059669, #10b981);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .content-section {
+            display: none;
+            margin: 20px;
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 25px;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.15);
+            overflow: hidden;
+        }
+
+        .content-section.active {
+            display: block;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .overview-content {
+            padding: 40px;
+        }
+
+        .overview-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #f1f5f9, #e2e8f0);
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+            border-left: 4px solid #1e40af;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.12);
+        }
+
+        .stat-number {
+            font-size: 2.8em;
+            font-weight: 800;
+            background: linear-gradient(135deg, #1e40af, #1a365d);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 1em;
+            color: #4b5563;
+            font-weight: 600;
+        }
+
+        .teams-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 25px;
+        }
+
+        .team-card {
+            background: #f8fafc;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+            border-left: 5px solid #22c55e;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .team-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.12);
+        }
+
+        .team-name {
+            font-size: 1.4em;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 15px;
+        }
+
+        .team-metrics {
+            display: flex;
+            justify-content: space-around;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .metric {
+            text-align: center;
+            flex: 1;
+        }
+
+        .metric-number {
+            font-size: 1.8em;
+            font-weight: 800;
+            margin-bottom: 3px;
+        }
+
+        .metric-number.good { color: #22c55e; }
+        .metric-number.bad { color: #fbbf24; }
+        .metric-number.ugly { color: #ef4444; }
+
+        .metric-label {
+            font-size: 0.85em;
+            color: #6b7280;
+            font-weight: 600;
+        }
+
+        .team-summary {
+            color: #4b5563;
+            font-size: 0.9em;
+            line-height: 1.5;
+        }
+
+        .report-content {
+            padding: 40px;
+        }
+
+        .team-header {
+            background: linear-gradient(135deg, #047857, #064e3b);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .team-title {
+            font-size: 2.2em;
+            font-weight: 800;
+            margin-bottom: 15px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header-metrics {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .metric-card {
+            background: rgba(255,255,255,0.2);
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .section {
+            margin-bottom: 30px;
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+            border-left: 6px solid;
+        }
+
+        .section.good {
+            background: linear-gradient(135deg, rgba(34,197,94,0.05), rgba(255,255,255,0.95));
+            border-left-color: #22c55e;
+        }
+
+        .section.bad {
+            background: linear-gradient(135deg, rgba(251,191,36,0.08), rgba(255,255,255,0.95));
+            border-left-color: #fbbf24;
+        }
+
+        .section.ugly {
+            background: linear-gradient(135deg, rgba(239,68,68,0.05), rgba(255,255,255,0.95));
+            border-left-color: #ef4444;
+        }
+
+        .section-title {
+            font-size: 1.8em;
+            font-weight: 800;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #1f2937;
+        }
+
+        .item-card {
+            background: #f8fafc;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            border-left: 4px solid;
+            transition: all 0.3s ease;
+        }
+
+        .item-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+
+        .item-card.high-impact {
+            border-left-color: #047857;
+            background: linear-gradient(135deg, #f0fdf4, #f8fafc);
+        }
+
+        .item-card.medium-impact {
+            border-left-color: #059669;
+            background: linear-gradient(135deg, #ecfdf5, #f8fafc);
+        }
+
+        .item-title {
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: #1f2937;
+            font-size: 1.05em;
+        }
+
+        .item-details {
+            font-size: 0.9em;
+            color: #4b5563;
+            margin-bottom: 8px;
+        }
+
+        .contributors-section {
+            background: rgba(5, 150, 105, 0.08);
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 12px;
+            border-left: 3px solid #059669;
+        }
+
+        .contributors-label {
+            font-weight: 700;
+            color: #047857;
+            margin-bottom: 5px;
+            font-size: 0.9em;
+        }
+
+        .contributors-list {
+            color: #374151;
+            font-size: 0.9em;
+        }
+
+        .no-items {
+            text-align: center;
+            padding: 40px;
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            color: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(40,167,69,0.3);
+        }
+
+        .no-items h3 {
+            font-size: 2em;
+            font-weight: 800;
+            margin: 10px 0;
+        }
+
+        @media (max-width: 768px) {
+            .nav-tabs {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .nav-tab {
+                width: 100%;
+                max-width: 300px;
+            }
+            
+            .overview-stats {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            .teams-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="nav-header">
+            <h1>🏢 GoDaddy Finance Teams</h1>
+            <p>Good, Bad & Ugly Dashboard - September 2025</p>
+            <div class="nav-tabs">
+                <button class="nav-tab active" data-section="overview">📊 Executive Summary</button>
+                <button class="nav-tab" data-section="finance-innovation">🚀 Finance Innovation</button>
+                <button class="nav-tab" data-section="revenue">💰 Revenue</button>
+                <button class="nav-tab" data-section="tax-team">🏛️ Tax Team</button>
+                <button class="nav-tab" data-section="strategic-finance">📊 Strategic Finance</button>
+                <button class="nav-tab" data-section="payroll">💼 Payroll</button>
+            </div>
+        </div>
+
+        <div id="overview" class="content-section active">
+            <div class="overview-content">
+                <div class="overview-stats">
+                    <div class="stat-card">
+                        <div class="stat-number">6</div>
+                        <div class="stat-label">Total Good Items</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">0</div>
+                        <div class="stat-label">Total Bad Items</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">0</div>
+                        <div class="stat-label">Total Ugly Items</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">4</div>
+                        <div class="stat-label">High Impact Items</div>
+                    </div>
+                </div>
+
+                <div class="teams-grid">
+                    <div class="team-card" data-section="finance-innovation">
+                        <div class="team-name">🚀 Finance Innovation</div>
+                        <div class="team-metrics">
+                            <div class="metric">
+                                <div class="metric-number good">1</div>
+                                <div class="metric-label">Good</div>
+                            </div>
+                            <div class="metric">
+                                <div class="metric-number good">0</div>
+                                <div class="metric-label">Bad</div>
+                            </div>
+                            <div class="metric">
+                                <div class="metric-number good">0</div>
+                                <div class="metric-label">Ugly</div>
+                            </div>
+                        </div>
+                        <div class="team-summary">2025R2 Uptake completed successfully - high-impact process improvement achievement.</div>
+                    </div>
+
+                    <div class="team-card" data-section="revenue">
+                        <div class="team-name">💰 Revenue</div>
+                        <div class="team-metrics">
+                            <div class="metric">
+                                <div class="metric-number good">2</div>
+                                <div class="metric-label">Good</div>
+                            </div>
+                            <div class="metric">
+                                <div class="metric-number good">0</div>
+                                <div class="metric-label">Bad</div>
+                            </div>
+                            <div class="metric">
+                                <div class="metric-number good">0</div>
+                                <div class="metric-label">Ugly</div>
+                            </div>
+                        </div>
+                        <div class="team-summary">Outstanding performance with 3-day preliminary close ($300K variance) and successful EFR adjustment posting clearing historical variances.</div>
+                    </div>
+
+                    <div class="team-card" data-section="tax-team">
+                        <div class="team-name">🏛️ Tax Team</div>
+                        <div class="team-metrics">
+                            <div class="metric">
+                                <div class="metric-number good">1</div>
+                                <div class="metric-label">Good</div>
+                            </div>
+                            <div class="metric">
+                                <div class="metric-number good">0</div>
+                                <div class="metric-label">Bad</div>
+                            </div>
+                            <div class="metric">
+                                <div class="metric-number good">0</div>
+                                <div class="metric-label">Ugly</div>
+                            </div>
+                        </div>
+                        <div class="team-summary">Successfully launched Vertex CLAR 2.2 in production for tax rates - high-impact process improvement.</div>
+                    </div>
+
+                    <div class="team-card" data-section="strategic-finance">
+                        <div class="team-name">📊 Strategic Finance</div>
+                        <div class="team-metrics">
+                            <div class="metric">
+                                <div class="metric-number good">1</div>
+                                <div class="metric-label">Good</div>
+                            </div>
+                            <div class="metric">
+                                <div class="metric-number good">0</div>
+                                <div class="metric-label">Bad</div>
+                            </div>
+                            <div class="metric">
+                                <div class="metric-number good">0</div>
+                                <div class="metric-label">Ugly</div>
+                            </div>
+                        </div>
+                        <div class="team-summary">Identified critical testing issues in NES AAA testing, proactively detecting problems before launch.</div>
+                    </div>
+
+                    <div class="team-card" data-section="payroll">
+                        <div class="team-name">💼 Payroll</div>
+                        <div class="team-metrics">
+                            <div class="metric">
+                                <div class="metric-number good">1</div>
+                                <div class="metric-label">Good</div>
+                            </div>
+                            <div class="metric">
+                                <div class="metric-number good">0</div>
+                                <div class="metric-label">Bad</div>
+                            </div>
+                            <div class="metric">
+                                <div class="metric-number good">0</div>
+                                <div class="metric-label">Ugly</div>
+                            </div>
+                        </div>
+                        <div class="team-summary">Colombia Time and Attendance system successfully launched, fully integrated within Workday.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="finance-innovation" class="content-section">
+            <div class="report-content">
+                <div class="team-header">
+                    <h2 class="team-title">🚀 Finance Innovation</h2>
+                    <div class="header-metrics">
+                        <div class="metric-card">
+                            <div style="font-size: 2.5em; font-weight: bold;">1</div>
+                            <div style="font-size: 0.9em;">Good</div>
+                        </div>
+                        <div class="metric-card">
+                            <div style="font-size: 2.5em; font-weight: bold;">0</div>
+                            <div style="font-size: 0.9em;">Bad</div>
+                        </div>
+                        <div class="metric-card">
+                            <div style="font-size: 2.5em; font-weight: bold;">0</div>
+                            <div style="font-size: 0.9em;">Ugly</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section good">
+                    <div class="section-title">
+                        <span>🌟</span>
+                        <span>THE GOOD</span>
+                    </div>
+                    
+                    <div class="item-card high-impact">
+                        <div class="item-title">2025R2 Uptake Complete</div>
+                        <div class="item-details">Successfully completed the 2025R2 uptake, representing a major system upgrade and process improvement milestone.</div>
+                        <div class="contributors-section">
+                            <div class="contributors-label">Contributors:</div>
+                            <div class="contributors-list">Kate Vu, Andrew Predun, Jen Roy</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section bad">
+                    <div class="no-items">
+                        <span style="font-size: 4em;">✅</span>
+                        <h3>No Bad Items!</h3>
+                        <p>Excellent performance with no process issues</p>
+                    </div>
+                </div>
+
+                <div class="section ugly">
+                    <div class="no-items">
+                        <span style="font-size: 4em;">✅</span>
+                        <h3>No Ugly Items!</h3>
+                        <p>Outstanding performance with zero critical issues</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="revenue" class="content-section">
+            <div class="report-content">
+                <div class="team-header">
+                    <h2 class="team-title">💰 Revenue Team</h2>
+                    <div class="header-metrics">
+                        <div class="metric-card">
+                            <div style="font-size: 2.5em; font-weight: bold;">2</div>
+                            <div style="font-size: 0.9em;">Good</div>
+                        </div>
+                        <div class="metric-card">
+                            <div style="font-size: 2.5em; font-weight: bold;">0</div>
+                            <div style="font-size: 0.9em;">Bad</div>
+                        </div>
+                        <div class="metric-card">
+                            <div style="font-size: 2.5em; font-weight: bold;">0</div>
+                            <div style="font-size: 0.9em;">Ugly</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section good">
+                    <div class="section-title">
+                        <span>🎯</span>
+                        <span>THE GOOD (2 Items)</span>
+                    </div>
+                    
+                    <div class="item-card high-impact">
+                        <div class="item-title">Three-Day Preliminary Close Achievement</div>
+                        <div class="item-details">Successfully completed the preliminary close within three days, achieving a minimal variance of only $300K between preliminary and final revenue figures - demonstrating exceptional accuracy and efficiency.</div>
+                        <div class="contributors-section">
+                            <div class="contributors-label">Contributors:</div>
+                            <div class="contributors-list">Meagan Shaver, Vivienne Su, Amanda Vigil, Melissa Bremmer, Curtis Jacobs</div>
+                        </div>
+                    </div>
+
+                    <div class="item-card medium-impact">
+                        <div class="item-title">EFR Historical Variance Resolution</div>
+                        <div class="item-details">The O2C team successfully posted all EFR adjustments as of September 30, effectively clearing historical immaterial variances and improving financial data accuracy.</div>
+                        <div class="contributors-section">
+                            <div class="contributors-label">Contributors:</div>
+                            <div class="contributors-list">Meagan Shaver, Michele Dugan, Vivienne Su, Renaldo Misrasi, Melissa Bremner, DeAnn Jiles</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section bad">
+                    <div class="no-items">
+                        <span style="font-size: 4em;">✅</span>
+                        <h3>No Bad Items!</h3>
+                        <p>Excellent performance with no process issues</p>
+                    </div>
+                </div>
+
+                <div class="section ugly">
+                    <div class="no-items">
+                        <span style="font-size: 4em;">✅</span>
+                        <h3>No Ugly Items!</h3>
+                        <p>Excellent performance with zero critical issues</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="tax-team" class="content-section">
+            <div class="report-content">
+                <div class="team-header">
+                    <h2 class="team-title">🏛️ Tax Team</h2>
+                    <div class="header-metrics">
+                        <div class="metric-card">
+                            <div style="font-size: 2.5em; font-weight: bold;">1</div>
+                            <div style="font-size: 0.9em;">Good</div>
+                        </div>
+                        <div class="metric-card">
+                            <div style="font-size: 2.5em; font-weight: bold;">0</div>
+                            <div style="font-size: 0.9em;">Bad</div>
+                        </div>
+                        <div class="metric-card">
+                            <div style="font-size: 2.5em; font-weight: bold;">0</div>
+                            <div style="font-size: 0.9em;">Ugly</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section good">
+                    <div class="section-title">
+                        <span>🌟</span>
+                        <span>THE GOOD</span>
+                    </div>
+                    
+                    <div class="item-card high-impact">
+                        <div class="item-title">Vertex CLAR 2.2 Production Launch</div>
+                        <div class="item-details">Successfully launched the new Vertex CLAR 2.2 in production for tax rates, representing a significant system upgrade and process improvement for tax calculations.</div>
+                        <div class="contributors-section">
+                            <div class="contributors-label">Contributors:</div>
+                            <div class="contributors-list">Jennifer Roy, Omar Amaya</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section bad">
+                    <div class="no-items">
+                        <span style="font-size: 4em;">✅</span>
+                        <h3>No Bad Items!</h3>
+                        <p>Excellent performance with no process issues</p>
+                    </div>
+                </div>
+
+                <div class="section ugly">
+                    <div class="no-items">
+                        <span style="font-size: 4em;">✅</span>
+                        <h3>No Ugly Items!</h3>
+                        <p>Outstanding performance with zero critical issues</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="strategic-finance" class="content-section">
+            <div class="report-content">
+                <div class="team-header">
+                    <h2 class="team-title">📊 Strategic Finance</h2>
+                    <div class="header-metrics">
+                        <div class="metric-card">
+                            <div style="font-size: 2.5em; font-weight: bold;">1</div>
+                            <div style="font-size: 0.9em;">Good</div>
+                        </div>
+                        <div class="metric-card">
+                            <div style="font-size: 2.5em; font-weight: bold;">0</div>
+                            <div style="font-size: 0.9em;">Bad</div>
+                        </div>
+                        <div class="metric-card">
+                            <div style="font-size: 2.5em; font-weight: bold;">0</div>
+                            <div style="font-size: 0.9em;">Ugly</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section good">
+                    <div class="section-title">
+                        <span>🌟</span>
+                        <span>THE GOOD</span>
+                    </div>
+                    
+                    <div class="item-card high-impact">
+                        <div class="item-title">NES AAA Testing Critical Issue Detection</div>
+                        <div class="item-details">Identified critical testing issues in NES AAA testing, enhancing value by proactively detecting problems prior to launch and fostering collaboration opportunities with the eComm team. This prevented potential production issues and improved cross-functional partnership.</div>
+                        <div class="contributors-section">
+                            <div class="contributors-label">Contributors:</div>
+                            <div class="contributors-list">Sarah Kosterow, Antonino Piro</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section bad">
+                    <div class="no-items">
+                        <span style="font-size: 4em;">✅</span>
+                        <h3>No Bad Items!</h3>
+                        <p>Excellent performance with no process issues</p>
+                    </div>
+                </div>
+
+                <div class="section ugly">
+                    <div class="no-items">
+                        <span style="font-size: 4em;">✅</span>
+                        <h3>No Ugly Items!</h3>
+                        <p>Outstanding performance with zero critical issues</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="payroll" class="content-section">
+            <div class="report-content">
+                <div class="team-header">
+                    <h2 class="team-title">💼 Payroll</h2>
+                    <div class="header-metrics">
+                        <div class="metric-card">
+                            <div style="font-size: 2.5em; font-weight: bold;">1</div>
+                            <div style="font-size: 0.9em;">Good</div>
+                        </div>
+                        <div class="metric-card">
+                            <div style="font-size: 2.5em; font-weight: bold;">0</div>
+                            <div style="font-size: 0.9em;">Bad</div>
+                        </div>
+                        <div class="metric-card">
+                            <div style="font-size: 2.5em; font-weight: bold;">0</div>
+                            <div style="font-size: 0.9em;">Ugly</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section good">
+                    <div class="section-title">
+                        <span>🌟</span>
+                        <span>THE GOOD</span>
+                    </div>
+                    
+                    <div class="item-card medium-impact">
+                        <div class="item-title">Colombia Time and Attendance Workday Integration</div>
+                        <div class="item-details">The Colombia Time and Attendance Tracking system has successfully gone live, now fully integrated and managed directly within Workday (WD) instead of relying on external tools. This enhancement streamlines time and leave tracking, delivering greater efficiency, improving the employee experience, and enabling more effective processing.</div>
+                        <div class="contributors-section">
+                            <div class="contributors-label">Contributors:</div>
+                            <div class="contributors-list">Maria Bonar</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section bad">
+                    <div class="no-items">
+                        <span style="font-size: 4em;">✅</span>
+                        <h3>No Bad Items!</h3>
+                        <p>Excellent performance with no process issues</p>
+                    </div>
+                </div>
+
+                <div class="section ugly">
+                    <div class="no-items">
+                        <span style="font-size: 4em;">✅</span>
+                        <h3>No Ugly Items!</h3>
+                        <p>Outstanding performance with zero critical issues</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // SharePoint-compatible JavaScript that works inline
+        (function() {
+            function showSection(sectionId) {
+                // Hide all sections
+                var sections = document.querySelectorAll('.content-section');
+                for (var i = 0; i < sections.length; i++) {
+                    sections[i].classList.remove('active');
+                }
+                
+                // Remove active class from all tabs
+                var tabs = document.querySelectorAll('.nav-tab');
+                for (var i = 0; i < tabs.length; i++) {
+                    tabs[i].classList.remove('active');
+                }
+                
+                // Show selected section
+                var section = document.getElementById(sectionId);
+                if (section) {
+                    section.classList.add('active');
+                }
+                
+                // Add active class to clicked tab
+                var clickedTab = document.querySelector('[data-section="' + sectionId + '"]');
+                if (clickedTab) {
+                    clickedTab.classList.add('active');
+                }
+                
+                // Scroll to top smoothly
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+
+            // Add click handlers to navigation tabs
+            document.addEventListener('DOMContentLoaded', function() {
+                var navTabs = document.querySelectorAll('.nav-tab');
+                for (var i = 0; i < navTabs.length; i++) {
+                    navTabs[i].addEventListener('click', function(e) {
+                        var sectionId = this.getAttribute('data-section');
+                        showSection(sectionId);
+                        e.preventDefault();
+                        return false;
+                    });
+                }
+
+                // Add click handlers to team cards
+                var teamCards = document.querySelectorAll('.team-card');
+                for (var i = 0; i < teamCards.length; i++) {
+                    teamCards[i].addEventListener('click', function(e) {
+                        var sectionId = this.getAttribute('data-section');
+                        showSection(sectionId);
+                        e.preventDefault();
+                        return false;
+                    });
+                }
+            });
+        })();
+    </script>
+</body>
+</html>
